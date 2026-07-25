@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include "packet.h"
+
 #include "../include/network.h"
 #include <linux/if.h>
 #include <linux/if_tun.h>
@@ -12,6 +13,7 @@
 #include "../include/interface.h"
 #include "../include/router.h"
 #include "../include/forward.h"
+#include "../include/socket.h"
 
 int tun_alloc(char *dev)
 {
@@ -63,6 +65,13 @@ if (best)
     char dev[IFNAMSIZ] = "fusion0";
 
     int fd = tun_alloc(dev);
+    int sock = create_socket();
+
+if (sock < 0)
+{
+    printf("Failed to create socket\n");
+    return 1;
+}
 
     if (fd < 0) {
         printf("Failed to create interface\n");
@@ -72,6 +81,12 @@ if (best)
     printf("Interface created: %s\n", dev);
 
     unsigned char buffer[2000];
+    
+
+if(sock < 0)
+{
+    return 1;
+}
 
 while (1)
 {
@@ -82,7 +97,8 @@ while (1)
         perror("read");
         break;
     }
-    forward_packet(buffer, n);
+
+    forward_packet(sock, buffer, n);
 
     parse_packet(buffer, n);
 }
