@@ -2,11 +2,11 @@
 #include <arpa/inet.h>
 #include "../include/forward.h"
 #include "../include/socket.h"
+#include "../include/peer.h"
 
 
-void forward_packet(int sock, unsigned char *buffer, int length)
+void forward_packet(unsigned char *buffer, int length)
 {
-    // IPv4 check
     int version = (buffer[0] >> 4);
 
     if (version != 4)
@@ -15,8 +15,7 @@ void forward_packet(int sock, unsigned char *buffer, int length)
         return;
     }
 
-
     printf("Forwarding IPv4 packet: %d bytes\n", length);
 
-    send_packet(sock, buffer, length);
+    // بعدا اینجا ارسال به peer اضافه می‌شود
 }

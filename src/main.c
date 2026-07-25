@@ -98,7 +98,7 @@ while (1)
         break;
     }
 
-    forward_packet(sock, buffer, n);
+    forward_packet(buffer, n);
 
     parse_packet(buffer, n);
 }
