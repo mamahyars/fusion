@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include "packet.h"
-
+#include "../include/network.h"
 #include <linux/if.h>
 #include <linux/if_tun.h>
 
@@ -39,6 +39,7 @@ int tun_alloc(char *dev)
 
 int main()
 {
+    list_interfaces();
     char dev[IFNAMSIZ] = "fusion0";
 
     int fd = tun_alloc(dev);
