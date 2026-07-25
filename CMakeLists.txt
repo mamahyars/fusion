@@ -18,4 +18,5 @@ add_executable(fusion
     src/socket.c
     src/peer.c
     src/receiver.c
+    src/fusion_protocol.c
 )

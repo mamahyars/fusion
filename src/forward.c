@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "../include/forward.h"
 #include "../include/peer.h"
+#include "../include/fusion_protocol.h"
+
 
 void forward_packet(unsigned char *buffer, int length)
 {
@@ -15,7 +17,18 @@ void forward_packet(unsigned char *buffer, int length)
 
     printf("Forwarding IPv4 packet: %d bytes\n", length);
 
-    send_to_peer(buffer, length);
+    unsigned char fusion_buffer[3000];
+
+add_fusion_header(
+    fusion_buffer,
+    buffer,
+    length
+);
+
+send_to_peer(
+    fusion_buffer,
+    length + sizeof(struct fusion_header)
+);
 
     printf("Sent to peer\n");
 }
