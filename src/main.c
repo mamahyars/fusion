@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include "packet.h"
 
 #include <linux/if.h>
 #include <linux/if_tun.h>
@@ -61,7 +62,7 @@ while (1)
         break;
     }
 
-    printf("Packet received (%d bytes)\n", n);
+    parse_packet(buffer, n);
 }
 
     close(fd);
