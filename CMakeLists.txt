@@ -4,8 +4,11 @@ project(Fusion C)
 
 set(CMAKE_C_STANDARD 17)
 
+include_directories(include)
+
 add_executable(fusion
     src/main.c
     src/packet.c
     src/network.c
+    src/speed.c
 )
