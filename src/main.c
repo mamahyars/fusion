@@ -10,6 +10,7 @@
 #include <linux/if_tun.h>
 #include "../include/speed.h"
 #include "../include/interface.h"
+#include "../include/router.h"
 
 int tun_alloc(char *dev)
 {
@@ -47,6 +48,16 @@ int main()
 int count = get_interfaces(interfaces, MAX_INTERFACES);
 
 print_interfaces(interfaces, count);
+NetworkInterface *best;
+
+best = select_best_interface(interfaces, count);
+
+if (best)
+{
+    printf("Best interface: %s (%d Mbps)\n",
+           best->name,
+           best->speed);
+}
     list_interfaces();
     char dev[IFNAMSIZ] = "fusion0";
 

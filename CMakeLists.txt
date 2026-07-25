@@ -13,4 +13,5 @@ add_executable(fusion
     src/speed.c
     src/interface.c
     src/speed.c
+    src/router.c
 )
