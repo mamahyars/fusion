@@ -11,6 +11,7 @@
 #include "../include/speed.h"
 #include "../include/interface.h"
 #include "../include/router.h"
+#include "../include/forward.h"
 
 int tun_alloc(char *dev)
 {
@@ -81,6 +82,7 @@ while (1)
         perror("read");
         break;
     }
+    forward_packet(buffer, n);
 
     parse_packet(buffer, n);
 }
