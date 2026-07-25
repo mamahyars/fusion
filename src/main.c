@@ -5,7 +5,8 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include "packet.h"
-
+#include <sys/select.h>
+#include "../include/receiver.h"
 #include "../include/network.h"
 #include <linux/if.h>
 #include <linux/if_tun.h>
@@ -14,9 +15,12 @@
 #include "../include/router.h"
 #include "../include/forward.h"
 #include "../include/socket.h"
+#include "../include/peer.h"
+#include "../include/receiver.h"
 
 int tun_alloc(char *dev)
 {
+    
     struct ifreq ifr;
     int fd;
 
@@ -43,7 +47,7 @@ int tun_alloc(char *dev)
     return fd;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
    
    NetworkInterface interfaces[MAX_INTERFACES];
@@ -65,6 +69,7 @@ if (best)
     char dev[IFNAMSIZ] = "fusion0";
 
     int fd = tun_alloc(dev);
+    int receiver = create_receiver(9000);
     int sock = create_socket();
 
 if (sock < 0)
@@ -87,21 +92,51 @@ if(sock < 0)
 {
     return 1;
 }
-
-while (1)
+if(argc < 3)
 {
-    int n = read(fd, buffer, sizeof(buffer));
+    printf("Usage: %s <peer_ip> <port>\n", argv[0]);
+    return 1;
+}
 
-    if (n < 0)
+set_peer(argv[1], atoi(argv[2]));
+
+    while (1)
     {
-        perror("read");
-        break;
+        fd_set fds;
+
+        FD_ZERO(&fds);
+
+        FD_SET(fd, &fds);
+        FD_SET(receiver, &fds);
+
+        int maxfd = fd > receiver ? fd : receiver;
+
+        select(maxfd + 1, &fds, NULL, NULL, NULL);
+
+
+        if (FD_ISSET(fd, &fds))
+        {
+            int n = read(fd, buffer, sizeof(buffer));
+
+            if (n > 0)
+            {
+                forward_packet(buffer, n);
+                parse_packet(buffer, n);
+            }
+        }
+
+
+        if (FD_ISSET(receiver, &fds))
+        {
+            int n = receive_from_peer(receiver, buffer);
+
+            if (n > 0)
+            {
+                write(fd, buffer, n);
+            }
+        }
     }
 
-    forward_packet(buffer, n);
-
-    parse_packet(buffer, n);
-}
 
     close(fd);
 

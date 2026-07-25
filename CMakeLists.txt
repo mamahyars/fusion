@@ -17,4 +17,5 @@ add_executable(fusion
     src/forward.c
     src/socket.c
     src/peer.c
+    src/receiver.c
 )
