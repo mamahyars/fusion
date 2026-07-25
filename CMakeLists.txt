@@ -11,4 +11,5 @@ add_executable(fusion
     src/packet.c
     src/network.c
     src/speed.c
+    src/interface.c
 )

@@ -9,6 +9,7 @@
 #include <linux/if.h>
 #include <linux/if_tun.h>
 #include "../include/speed.h"
+#include "../include/interface.h"
 
 int tun_alloc(char *dev)
 {
@@ -40,7 +41,12 @@ int tun_alloc(char *dev)
 
 int main()
 {
-    show_speeds();
+   
+   NetworkInterface interfaces[MAX_INTERFACES];
+
+int count = get_interfaces(interfaces, MAX_INTERFACES);
+
+print_interfaces(interfaces, count); show_speeds();
     list_interfaces();
     char dev[IFNAMSIZ] = "fusion0";
 
