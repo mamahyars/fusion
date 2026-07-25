@@ -46,7 +46,7 @@ int main()
 
 int count = get_interfaces(interfaces, MAX_INTERFACES);
 
-print_interfaces(interfaces, count); show_speeds();
+print_interfaces(interfaces, count);
     list_interfaces();
     char dev[IFNAMSIZ] = "fusion0";
 

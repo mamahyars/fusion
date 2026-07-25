@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ifaddrs.h>
+#include "../include/speed.h"
 
 #include "../include/interface.h"
 
@@ -44,7 +45,7 @@ int get_interfaces(NetworkInterface *list, int max)
                         sizeof(list[count].name)-1);
 
                 list[count].active = 1;
-                list[count].speed = 0;
+                list[count].speed = get_interface_speed(ifa->ifa_name);
 
                 count++;
             }

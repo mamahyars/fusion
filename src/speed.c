@@ -1,27 +1,32 @@
 #include <stdio.h>
 #include <string.h>
-#include <ifaddrs.h>
 
-void show_speeds()
+#include "../include/speed.h"
+
+
+int get_interface_speed(char *name)
 {
-    struct ifaddrs *interfaces;
-    struct ifaddrs *ifa;
+    char path[128];
 
-    if (getifaddrs(&interfaces) == -1)
+    snprintf(path, sizeof(path),
+             "/sys/class/net/%s/speed",
+             name);
+
+
+    FILE *file = fopen(path, "r");
+
+    if (!file)
     {
-        perror("getifaddrs");
-        return;
+        return 0;
     }
 
-    printf("Network interfaces:\n");
 
-    for (ifa = interfaces; ifa != NULL; ifa = ifa->ifa_next)
-    {
-        if (ifa->ifa_name)
-        {
-            printf(" - %s\n", ifa->ifa_name);
-        }
-    }
+    int speed = 0;
 
-    freeifaddrs(interfaces);
+    fscanf(file, "%d", &speed);
+
+    fclose(file);
+
+
+    return speed;
 }

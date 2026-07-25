@@ -1,6 +1,6 @@
 #ifndef SPEED_H
 #define SPEED_H
 
-void show_speeds();
+int get_interface_speed(char *name);
 
 #endif
