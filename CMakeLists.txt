@@ -19,4 +19,5 @@ add_executable(fusion
     src/peer.c
     src/receiver.c
     src/fusion_protocol.c
+    src/reorder.c
 )

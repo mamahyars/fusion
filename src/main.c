@@ -17,6 +17,8 @@
 #include "../include/socket.h"
 #include "../include/peer.h"
 #include "../include/receiver.h"
+#include "../include/fusion_protocol.h"
+#include "../include/reorder.h"
 
 int tun_alloc(char *dev)
 {
@@ -99,6 +101,7 @@ if(argc < 3)
 }
 
 set_peer(argv[1], atoi(argv[2]));
+reorder_init();
 
     while (1)
     {
@@ -132,13 +135,32 @@ set_peer(argv[1], atoi(argv[2]));
 
             if (n > 0)
             {
-                write(fd, buffer, n);
-            }
-        }
-    }
+                unsigned char *out_packet;
+                int out_length;
 
+                n = remove_fusion_header(buffer, n);
+
+                if (n > 0)
+                {
+                    struct fusion_header *hdr =
+                        (struct fusion_header *)buffer;
+
+                    if (reorder_packet(
+                            hdr->packet_id,
+                            buffer,
+                            n,
+                            &out_packet,
+                            &out_length))
+                    {
+                        write(fd, out_packet, out_length);
+                    }
+                }
+            }
+        }   // پایان if(FD_ISSET)
+
+    }       // پایان while(1)
 
     close(fd);
 
     return 0;
-}
+}           // پایان main()
