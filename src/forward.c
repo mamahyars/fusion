@@ -18,6 +18,10 @@ void forward_packet(unsigned char *buffer, int length)
     printf("Forwarding IPv4 packet: %d bytes\n", length);
 
     unsigned char fusion_buffer[3000];
+    if (length > FUSION_MAX_PAYLOAD)
+{
+    printf("Large packet detected (%d bytes)\n", length);
+}
 
 add_fusion_header(
     fusion_buffer,

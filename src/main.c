@@ -19,6 +19,7 @@
 #include "../include/receiver.h"
 #include "../include/fusion_protocol.h"
 #include "../include/reorder.h"
+#include "../include/ack.h"
 
 int tun_alloc(char *dev)
 {
@@ -137,6 +138,15 @@ reorder_init();
             {
                 unsigned char *out_packet;
                 int out_length;
+                if (is_ack_packet(buffer))
+{
+    struct fusion_header *hdr =
+        (struct fusion_header *)buffer;
+
+    printf("ACK #%u received\n", hdr->packet_id);
+
+    continue;
+}
 
                 n = remove_fusion_header(buffer, n);
 
@@ -156,11 +166,11 @@ reorder_init();
                     }
                 }
             }
-        }   // پایان if(FD_ISSET)
+        }   
 
-    }       // پایان while(1)
+    }       
 
     close(fd);
 
     return 0;
-}           // پایان main()
+}           

@@ -4,7 +4,15 @@
 #include "../include/fusion_protocol.h"
 static unsigned int next_packet_id = 1;
 static unsigned short last_packet_id = 0;
+int is_ack_packet(
+    unsigned char *packet
+)
+{
+    struct fusion_header *header =
+        (struct fusion_header *)packet;
 
+    return header->type == FUSION_TYPE_ACK;
+}
 void add_fusion_header(
     unsigned char *out,
     unsigned char *packet,
@@ -63,7 +71,7 @@ int remove_fusion_header(
 }
 void create_ack(
     unsigned char *buffer,
-    unsigned short packet_id
+    unsigned int packet_id
 )
 {
     struct fusion_header *header =

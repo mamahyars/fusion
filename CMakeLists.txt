@@ -20,4 +20,5 @@ add_executable(fusion
     src/receiver.c
     src/fusion_protocol.c
     src/reorder.c
+    src/ack.c
 )
