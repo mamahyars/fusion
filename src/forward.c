@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include "../include/forward.h"
 #include "../include/peer.h"
+
+#include "../include/cache.h"
 #include "../include/fusion_protocol.h"
+#include "../include/scheduler.h"
 
 
 void forward_packet(unsigned char *buffer, int length)
@@ -28,6 +31,25 @@ add_fusion_header(
     buffer,
     length
 );
+struct fusion_header *hdr =
+    (struct fusion_header *)fusion_buffer;
+
+cache_store(
+    hdr->packet_id,
+    fusion_buffer,
+    length + sizeof(struct fusion_header)
+);
+
+int link = select_link();
+
+if(link == 0)
+{
+    printf("Using LAN\n");
+}
+else
+{
+    printf("Using Wi-Fi\n");
+}
 
 send_to_peer(
     fusion_buffer,

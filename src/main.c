@@ -20,6 +20,11 @@
 #include "../include/fusion_protocol.h"
 #include "../include/reorder.h"
 #include "../include/ack.h"
+#include "../include/cache.h"
+#include "../include/scheduler.h"
+
+
+
 
 int tun_alloc(char *dev)
 {
@@ -103,10 +108,15 @@ if(argc < 3)
 
 set_peer(argv[1], atoi(argv[2]));
 reorder_init();
+cache_init();
 
     while (1)
-    {
-        fd_set fds;
+{
+    cache_resend();
+
+    fd_set fds;
+        cache_check_timeouts();
+        
 
         FD_ZERO(&fds);
 
@@ -131,46 +141,56 @@ reorder_init();
 
 
         if (FD_ISSET(receiver, &fds))
-        {
-            int n = receive_from_peer(receiver, buffer);
-
-            if (n > 0)
-            {
-                unsigned char *out_packet;
-                int out_length;
-                if (is_ack_packet(buffer))
 {
-    struct fusion_header *hdr =
-        (struct fusion_header *)buffer;
+    int n = receive_from_peer(receiver, buffer);
 
+    if (n > 0)
+    {
+        unsigned char *out_packet;
+        int out_length;
+
+        struct fusion_header *hdr =
+            (struct fusion_header *)buffer;
+
+        /* اگر ACK است */
+        if (is_ack_packet(buffer))
+{
     printf("ACK #%u received\n", hdr->packet_id);
+
+    cache_remove(hdr->packet_id);
 
     continue;
 }
 
-                n = remove_fusion_header(buffer, n);
+        /* اگر DATA است */
+        if (hdr->type == FUSION_TYPE_DATA);
+        {
+            send_ack(hdr->packet_id);
+        }
 
-                if (n > 0)
-                {
-                    struct fusion_header *hdr =
-                        (struct fusion_header *)buffer;
+        /* قبل از حذف Header شماره Packet را نگه می‌داریم */
+        unsigned int packet_id = hdr->packet_id;
 
-                    if (reorder_packet(
-                            hdr->packet_id,
-                            buffer,
-                            n,
-                            &out_packet,
-                            &out_length))
-                    {
-                        write(fd, out_packet, out_length);
-                    }
-                }
+        n = remove_fusion_header(buffer, n);
+
+        if (n > 0)
+        {
+            if (reorder_packet(
+                    packet_id,
+                    buffer,
+                    n,
+                    &out_packet,
+                    &out_length))
+                        {
+                write(fd, out_packet, out_length);
             }
-        }   
+        }
+    }
+}   // پایان if (FD_ISSET)
 
-    }       
+}   // پایان while
 
-    close(fd);
+close(fd);
 
-    return 0;
-}           
+return 0;
+}   // پایان main

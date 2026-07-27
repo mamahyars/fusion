@@ -12,7 +12,6 @@ add_executable(fusion
     src/network.c
     src/speed.c
     src/interface.c
-    src/speed.c
     src/router.c
     src/forward.c
     src/socket.c
@@ -21,4 +20,6 @@ add_executable(fusion
     src/fusion_protocol.c
     src/reorder.c
     src/ack.c
+    src/cache.c
+    src/scheduler.c
 )
