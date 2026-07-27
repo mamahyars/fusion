@@ -22,7 +22,8 @@
 #include "../include/ack.h"
 #include "../include/cache.h"
 #include "../include/scheduler.h"
-
+#include "../include/link.h"
+#include "../include/socket_pool.h"
 
 
 
@@ -109,6 +110,8 @@ if(argc < 3)
 set_peer(argv[1], atoi(argv[2]));
 reorder_init();
 cache_init();
+link_init();
+sockets_init();
 
     while (1)
 {

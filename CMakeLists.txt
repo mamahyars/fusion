@@ -22,4 +22,6 @@ add_executable(fusion
     src/ack.c
     src/cache.c
     src/scheduler.c
+    src/link.c
+    src/socket_pool.c
 )

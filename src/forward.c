@@ -5,6 +5,8 @@
 #include "../include/cache.h"
 #include "../include/fusion_protocol.h"
 #include "../include/scheduler.h"
+#include "../include/link.h"
+
 
 
 void forward_packet(unsigned char *buffer, int length)
@@ -51,10 +53,14 @@ else
     printf("Using Wi-Fi\n");
 }
 
-send_to_peer(
-    fusion_buffer,
-    length + sizeof(struct fusion_header)
-);
+if(link == 0)
+{
+    send_lan(buffer, length);
+}
+else
+{
+    send_wifi(buffer, length);
+}
 
     printf("Sent to peer\n");
 }
